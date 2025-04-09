@@ -1,0 +1,21 @@
+CREATE TABLE `clientes_parking` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario` text NOT NULL,
+  `matriculas` json DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) 
+
+
+CREATE TABLE `parking_tienda` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `matricula` varchar(50) DEFAULT NULL,
+  `hora_entrada` varchar(20) DEFAULT NULL,
+  `fecha_entrada` varchar(20) DEFAULT NULL,
+  `hora_salida` varchar(20) DEFAULT NULL,
+  `usuario` varchar(20) DEFAULT NULL,
+  `precio` decimal(20,2) DEFAULT NULL,
+  `cliente_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_cliente` (`cliente_id`),
+  CONSTRAINT `fk_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `clientes_parking` (`id`)
+)
