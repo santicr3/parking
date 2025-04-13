@@ -32,7 +32,8 @@ def get_client(page: ft.Page):
         selected_file.update()
         selected_image.update()
 
-    pick_files_dialog = ft.FilePicker(on_result=pick_files_result, allowed_extensions=["png", "jpg", "jpeg", "webp"])
+    pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
+    pick_files_dialog.allowed_extensions = ["png", "jpg", "jpeg", "webp"]
     if pick_files_dialog not in page.overlay:
         page.overlay.append(pick_files_dialog)
 

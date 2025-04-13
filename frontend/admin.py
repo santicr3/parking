@@ -1,38 +1,31 @@
 import flet as ft
 import os
 import base64
+import requests
+
+def get_data(endpoint):
+    requests.get("https://api.example.com/data/"+endpoint)
+
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print(f"Error: {response.status_code}")
+
 
 
 def get_admin(page: ft.Page):
 
     actual_path = os.path.abspath(os.getcwd())
 
-    return ft.Column(
-        [
-            ft.ElevatedButton(
-                "Coche entra",
-                icon=ft.Icons.ARROW_CIRCLE_UP,
-                on_click=lambda _: pick_files_dialog.pick_files(
-                    allow_multiple=False,
-                    file_type=ft.FilePickerFileType.IMAGE,
-                ),
-            ),
-            ft.ElevatedButton(
-                "Coche sale",
-                icon=ft.Icons.ARROW_CIRCLE_DOWN,
-                on_click=lambda _: pick_files_dialog.pick_files(
-                    allow_multiple=False,
-                    file_type=ft.FilePickerFileType.IMAGE,
-                ),
-            ),
-            selected_file,
-            selected_image,
+    table = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("First name")),
+            ft.DataColumn(ft.Text("Last name")),
+            ft.DataColumn(ft.Text("Age"), numeric=True),
         ],
-        alignment=ft.MainAxisAlignment.CENTER,
+        rows=[]
     )
 
-def get_cars():
-    print("Getting cars...")
+    page.update()
 
-def get_clients():
-    print("Getting cars")
+    return table
