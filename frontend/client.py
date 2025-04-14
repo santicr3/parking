@@ -1,62 +1,95 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import flet as ft
 import os
 import base64
+import requests
 
+def plate_check(img):
+
+    global type
+    endpoint = "parking_entrada" if type == 'entrada' else "parking_salida"
+
+    payload = {'imagen': img}
+
+    response = requests.post(f"http://127.0.0.1:5000/{endpoint}", json=payload)
+    
+    if response.status_code == 200:
+        print(response.json())
+    else:
+        print(f"Error: {response.status_code}")
+        print(response.json())
 
 def get_client(page: ft.Page):
-
     actual_path = os.path.abspath(os.getcwd())
 
-    selected_file = ft.Text()
+    exit_debt = ft.Text()
+    selected_image = ft.Image(src=os.path.join(actual_path, "frontend/media/default.jpg"), width=300, height=300)
 
-    selected_image = ft.Image(src=actual_path+"frontend/media/default.jpg", width=300, height=300)
+    type = None
 
     async def pick_files_result(e: ft.FilePickerResultEvent):
         if e.files:
             file = e.files[0]
-            print(file)
-            
-            selected_file.value = file.name
-            selected_image.src = file.path
+            print(f"Picked file: {file.name}, path: {file.path}")
 
-            file_bytes = await page.client_storage.read_bytes(file)
+            try:
+                with open(file.path, "rb") as f:
+                    file_bytes = f.read()
+                base64_str = base64.b64encode(file_bytes).decode("utf-8")
 
-            base64_str = base64.b64encode(file_bytes).decode("utf-8")
+                selected_image.src = file.path
 
-            selected_image.src = f"data:image/jpeg;base64,{base64_str}"
-            selected_file.value = base64_str
+                plate_check(base64_str)
+            except Exception as err:
+                selected_image.src = os.path.join(actual_path, "frontend/media/default.jpg")
         else:
-            selected_file.value = "Cancelled!"
-            selected_image.src = "./media/default.jpg"
+            selected_image.src = os.path.join(actual_path, "frontend/media/default.jpg")
 
-        selected_file.update()
         selected_image.update()
 
+    # File picker setup
     pick_files_dialog = ft.FilePicker(on_result=pick_files_result)
     pick_files_dialog.allowed_extensions = ["png", "jpg", "jpeg", "webp"]
+
     if pick_files_dialog not in page.overlay:
         page.overlay.append(pick_files_dialog)
 
-    return ft.Column(
+    def handle_entry_click(e):
+        global type
+        type = "entrada"
+        pick_files_dialog.pick_files(
+            allow_multiple=False,
+            file_type=ft.FilePickerFileType.IMAGE,
+        )
+
+    def handle_exit_click(e):
+        global type
+        type = "salida"
+        pick_files_dialog.pick_files(
+            allow_multiple=False,
+            file_type=ft.FilePickerFileType.IMAGE,
+        )
+
+    return ft.Column([
+        ft.Row(
         [
             ft.ElevatedButton(
                 "Coche entra",
                 icon=ft.Icons.ARROW_CIRCLE_UP,
-                on_click=lambda _: pick_files_dialog.pick_files(
-                    allow_multiple=False,
-                    file_type=ft.FilePickerFileType.IMAGE,
-                ),
+                on_click=handle_entry_click
             ),
             ft.ElevatedButton(
                 "Coche sale",
                 icon=ft.Icons.ARROW_CIRCLE_DOWN,
-                on_click=lambda _: pick_files_dialog.pick_files(
-                    allow_multiple=False,
-                    file_type=ft.FilePickerFileType.IMAGE,
-                ),
-            ),
-            selected_file,
-            selected_image,
+                on_click=handle_exit_click
+            )
         ],
         alignment=ft.MainAxisAlignment.CENTER,
-    )
+        ),
+        selected_image,
+        exit_debt
+    ], alignment=ft.MainAxisAlignment.CENTER,
+    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    ) 
+

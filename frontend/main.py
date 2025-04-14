@@ -8,7 +8,7 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
     root_page = ft.Container(
-        content=ft.Column(
+        content=ft.Row(
             [
                 ft.ElevatedButton(
                     "Admin",
