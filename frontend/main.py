@@ -30,6 +30,7 @@ def main(page: ft.Page):
         route = e.route
         print("Ruta actual:", route)
 
+
         if route == "/":
             page.views.append(
                 ft.View(
@@ -49,7 +50,7 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     "/admin",
-                    [client.get_client(page)],
+                    [admin.get_admin(page)],
                 )
             )
 
