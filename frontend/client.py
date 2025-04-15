@@ -5,28 +5,34 @@ import os
 import base64
 import requests
 
-def plate_check(img):
-
-    global type
-    endpoint = "parking_entrada" if type == 'entrada' else "parking_salida"
-
-    payload = {'imagen': img}
-
-    response = requests.post(f"http://127.0.0.1:5000/{endpoint}", json=payload)
-    
-    if response.status_code == 200:
-        print(response.json())
-    else:
-        print(f"Error: {response.status_code}")
-        print(response.json())
-
 def get_client(page: ft.Page):
+    go_back_button = ft.Button(text=" ", icon=ft.Icons.CHEVRON_LEFT, on_click=lambda _: page.go("/"))
     actual_path = os.path.abspath(os.getcwd())
 
     exit_debt = ft.Text()
     selected_image = ft.Image(src=os.path.join(actual_path, "frontend/media/default.jpg"), width=300, height=300)
 
     type = None
+
+    def plate_check(img):
+
+        global type
+        endpoint = "parking_entrada" if type == 'entrada' else "parking_salida"
+
+        payload = {'imagen': img}
+
+        response = requests.post(f"http://127.0.0.1:5000/{endpoint}", json=payload)
+        
+        if response.status_code == 200:
+            response_json = response.json()
+            print(response_json)
+            if(endpoint == 'parking_salida'):
+                print(response_json['cliente']['precio'])
+                exit_debt.value = f"{response_json['cliente']['precio']}€ por su estancia"
+                page.update()
+        else:
+            print(f"Error: {response.status_code}")
+            print(response.json())
 
     async def pick_files_result(e: ft.FilePickerResultEvent):
         if e.files:
@@ -72,6 +78,7 @@ def get_client(page: ft.Page):
         )
 
     return ft.Column([
+        go_back_button,
         ft.Row(
         [
             ft.ElevatedButton(

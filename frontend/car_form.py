@@ -2,8 +2,8 @@ import flet as ft
 import requests
 
 def create_car(page: ft.Page, id=0):
-    id_field = ft.TextField(label="Id", disabled=True)
     matricula_field = ft.TextField(label="Matricula")
+    go_back_button = ft.Button(text=" ", icon=ft.Icons.CHEVRON_LEFT, on_click=lambda _: page.go_back())
     hora_entrada_field = ft.TextField(label="Hora de entrada")
     fecha_entrada_field = ft.TextField(label="Fecha de entrada")
     hora_salida_field = ft.TextField(label="Hora de salida")
@@ -18,7 +18,6 @@ def create_car(page: ft.Page, id=0):
         endpoint = 'parking_entrada' if id == None else 'actualizar_datos_parking_cliente'
 
         data = {
-            "id": id_field.value,
             "matricula": matricula_field.value,
             "hora_entrada": hora_entrada_field.value,
             "fecha_entrada": fecha_entrada_field.value,
@@ -44,7 +43,7 @@ def create_car(page: ft.Page, id=0):
 
     # Add fields to the page
     return ft.Column([
-            id_field,
+            go_back_button,
             matricula_field,
             hora_entrada_field,
             fecha_entrada_field,
