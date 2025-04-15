@@ -1,6 +1,8 @@
 import flet as ft
 import client
 import admin
+import car_form
+import client_form
 
 def main(page: ft.Page):
 
@@ -51,6 +53,22 @@ def main(page: ft.Page):
                 ft.View(
                     "/admin",
                     [admin.get_admin(page)],
+                )
+            )
+        elif route == "/crear-entrada":
+            print("Route: Crear entrada")
+            page.views.append(
+                ft.View(
+                    "/crear-entrada",
+                    [car_form.create_car(page)],
+                )
+            )
+        elif route == "/crear-cliente":
+            print("Route: Crear cliente")
+            page.views.append(
+                ft.View(
+                    "/crear-cliente",
+                    [client_form.create_client(page)],
                 )
             )
 

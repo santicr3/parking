@@ -87,7 +87,13 @@ def get_admin(page: ft.Page):
 
     return ft.Row(
         [
-            tabla_clientes,
-            tabla_entradas
+            ft.Column([
+                ft.Button(text=" ", icon=ft.Icons.ADD, bgcolor=ft.Colors.GREEN_900, icon_color=ft.colors.WHITE, on_click=lambda _: page.go("/crear-cliente"),),
+                tabla_clientes,
+            ]),
+            ft.Column([
+                # ft.Button(text=" ", icon=ft.Icons.ADD, bgcolor=ft.Colors.GREEN_900, icon_color=ft.colors.WHITE, on_click=lambda _: page.go("/crear-entrada"),),
+                tabla_entradas,
+            ]),
         ]
     )
